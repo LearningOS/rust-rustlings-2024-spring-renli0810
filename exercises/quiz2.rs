@@ -31,11 +31,17 @@ mod my_module {
     use super::Command;
 
     // TODO: Complete the function signature!
-    pub fn transformer(input: ???) -> ??? {
+    pub fn transformer(input: Vec<(String,Command)>) -> Vec<String> {
         // TODO: Complete the output declaration!
-        let mut output: ??? = vec![];
+        let mut output: Vec<String> = vec![];
         for (string, command) in input.iter() {
             // TODO: Complete the function body. You can do it!
+            let member = match command{
+                Command::Uppercase => string.to_uppercase().to_string(),
+                Command::Trim => string.trim().to_string(),
+                Command::Append(usize) => string.to_owned()+&("bar".repeat(*usize).to_string()),
+            };
+            output.push(member);
         }
         output
     }
@@ -44,7 +50,7 @@ mod my_module {
 #[cfg(test)]
 mod tests {
     // TODO: What do we need to import to have `transformer` in scope?
-    use ???;
+    use crate::my_module::transformer;
     use super::Command;
 
     #[test]
