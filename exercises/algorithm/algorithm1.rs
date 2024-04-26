@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -29,13 +28,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: std::cmp::PartialOrd> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: std::cmp::PartialOrd> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -69,14 +68,73 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> LinkedList<T> 
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+		let mut list_mergre = LinkedList::<T>::new();
+        let mut list_a_cnt = 0;
+        let mut list_b_cnt = 0;
+        let mut list_a_point = list_a.start.unwrap();
+        let mut list_b_point = list_b.start.unwrap();
+        while list_a_cnt <list_a.length && list_b_cnt < list_b.length {
+            let list_a_num = unsafe { &(*list_a_point.as_ptr()).val};
+            let list_b_num = unsafe { &(*list_b_point.as_ptr()).val};
+            if list_a_num < list_b_num{
+                match list_mergre.end {
+                    None => list_mergre.start = Some(list_a_point),
+                    Some(end_ptr) => unsafe { (*end_ptr.as_ptr()).next = Some(list_a_point) },
+                }
+                list_mergre.end = Some(list_a_point);
+                list_a_cnt+=1;
+                if list_a_cnt == list_a.length 
+                {   
+                    break;
+                }
+                list_a_point =unsafe { (*list_a_point.as_ptr()).next.unwrap() };
+            }
+            else {
+                match list_mergre.end {
+                    None => list_mergre.start = Some(list_b_point),
+                    Some(end_ptr) => unsafe { (*end_ptr.as_ptr()).next = Some(list_b_point) },
+                }
+                list_mergre.end = Some(list_b_point);
+                list_b_cnt+=1;
+                if list_b_cnt == list_b.length 
+                {   
+                    break;
+                }
+                list_b_point =unsafe { (*list_b_point.as_ptr()).next.unwrap() };
+            }
+            list_mergre.length += 1;
         }
+        while list_a_cnt <list_a.length{
+            match list_mergre.end {
+                None => list_mergre.start = Some(list_a_point),
+                Some(end_ptr) => unsafe { (*end_ptr.as_ptr()).next = Some(list_a_point) },
+            }
+            list_mergre.end = Some(list_a_point);
+            list_a_cnt+=1;
+            if list_a_cnt == list_a.length 
+            {   
+                break;
+            }
+            list_a_point =unsafe { (*list_a_point.as_ptr()).next.unwrap() };
+            list_mergre.length += 1;
+        }
+        while list_b_cnt < list_b.length{
+            match list_mergre.end {
+                None => list_mergre.start = Some(list_b_point),
+                Some(end_ptr) => unsafe { (*end_ptr.as_ptr()).next = Some(list_b_point) },
+            }
+            list_mergre.end = Some(list_b_point);
+            list_b_cnt+=1;
+            if list_b_cnt == list_b.length 
+            {   
+                break;
+            }
+            list_b_point =unsafe { (*list_b_point.as_ptr()).next.unwrap() };
+            list_mergre.length += 1;
+        }
+        list_mergre
 	}
 }
 
