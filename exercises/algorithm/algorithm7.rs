@@ -3,7 +3,6 @@
 	This question requires you to use a stack to achieve a bracket match
 */
 
-// I AM NOT DONE
 #[derive(Debug)]
 struct Stack<T> {
 	size: usize,
@@ -31,8 +30,8 @@ impl<T> Stack<T> {
 		self.size += 1;
 	}
 	fn pop(&mut self) -> Option<T> {
-		// TODO
-		None
+		self.size-=1;
+		Some(self.data.remove(self.size))
 	}
 	fn peek(&self) -> Option<&T> {
 		if 0 == self.size {
@@ -101,8 +100,76 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 
 fn bracket_match(bracket: &str) -> bool
 {
-	//TODO
-	true
+	let mut sta = Stack::new();
+	for str in bracket.bytes(){
+		if str == b'(' {
+			sta.push(1);
+		}
+		else if str == b'['{
+			sta.push(2);
+		}
+		else if str == b'{'{
+			sta.push(3);
+		}
+		else if str == b')'{
+			if sta.is_empty(){
+				return false;
+			}
+			else {
+				let statop = sta.pop();
+				match statop {
+					Some(value)=>{
+						if value != 1{
+							return false;
+						}
+					}
+					None => {
+						return false;
+					}
+				}
+			}
+		}
+		else if str == b']' {
+			if sta.is_empty(){
+				return false;
+			}
+			else {
+				let statop = sta.pop();
+				match statop {
+					Some(value)=>{
+						if value != 2{
+							return false;
+						}
+					}
+					None => {
+						return false;
+					}
+				}
+			}
+		}
+		else if str == b'}' {
+			if sta.is_empty(){
+				return false;
+			}
+			else {
+				let statop = sta.pop();
+				match statop {
+					Some(value)=>{
+						if value != 3{
+							return false;
+						}
+					}
+					None => {
+						return false;
+					}
+				}
+			}
+		}
+	}
+	if sta.is_empty(){
+		return true;
+	}
+	false
 }
 
 #[cfg(test)]

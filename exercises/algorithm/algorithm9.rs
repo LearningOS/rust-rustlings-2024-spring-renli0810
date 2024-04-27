@@ -2,7 +2,6 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -18,7 +17,7 @@ where
 
 impl<T> Heap<T>
 where
-    T: Default,
+    T: Default
 {
     pub fn new(comparator: fn(&T, &T) -> bool) -> Self {
         Self {
@@ -37,7 +36,13 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.count+=1;
+        let mut nowp = self.count;
+        self.items.push(value);
+        while nowp!=1 && (self.comparator)(&self.items[nowp],&self.items[nowp/2]){
+            self.items.swap(nowp,nowp/2);
+            nowp = nowp/2;
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -45,7 +50,7 @@ where
     }
 
     fn children_present(&self, idx: usize) -> bool {
-        self.left_child_idx(idx) <= self.count
+        self.right_child_idx(idx) <= self.count
     }
 
     fn left_child_idx(&self, idx: usize) -> usize {
@@ -57,8 +62,16 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        if !self.children_present(idx){
+            idx
+        }
+        else if !(self.comparator)(&self.items[self.left_child_idx(idx)],&self.items[self.right_child_idx(idx)]){
+            self.left_child_idx(idx)
+        }
+        else {
+            self.right_child_idx(idx)
+        }
+		
     }
 }
 
@@ -79,13 +92,17 @@ where
 
 impl<T> Iterator for Heap<T>
 where
-    T: Default,
+    T: Default ,
 {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.count == 0{
+            return None;
+        }
+        let res = self.items.remove(1);
+        self.count-=1;
+        Some(res)
     }
 }
 
